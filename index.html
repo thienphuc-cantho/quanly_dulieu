@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Lịch công tác VKSND TP.Cần Thơ</title>
+    <title>Phần mềm Lịch công tác VKSND TP.Cần Thơ 1.0</title>
     <style>
         body { font-family: "Times New Roman", Times, serif; background:#f4f7f6; margin:0; padding:20px; line-height: 1.4; color: black; }
         .no-print { max-width: 1100px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; border-top: 5px solid #da251d; }
@@ -31,8 +31,8 @@
         .btn-green { background: #28a745; }
         .btn-orange { background: #f0ad4e; }
         .btn-gray { background: #666; }
+        .warning-box { grid-column: span 2; padding: 15px; background: #fff3f3; color: #d9534f; border: 1px solid #f5c6cb; border-radius: 4px; text-align: center; font-weight: bold; }
         
-        /* CSS cho phần quản lý danh sách */
         .staff-manager { margin-top: 20px; padding: 15px; border: 1px solid #444; border-radius: 5px; background: #fffde7; }
 
         @media print {
@@ -72,13 +72,17 @@
         <div id="t-dem" class="tab-item" onclick="setTab('dem')">LỊCH TRỰC ĐÊM</div>
         <div id="t-cuoituan" class="tab-item" onclick="setTab('cuoituan')">LỊCH TRỰC T7-CN</div>
         <div id="t-le" class="tab-item" onclick="setTab('le')">LỊCH TRỰC LỄ</div>
-        <div id="t-staff" class="tab-item" onclick="setTab('staff')" style="background: #333; color: white;">QUẢN LÝ DANH SÁCH CÁN BỘ</div>
+        <div id="t-staff" class="tab-item" onclick="setTab('staff')" style="background: #333; color: white; display: none;">DANH SÁCH CÁN BỘ</div>
+    </div>
+
+    <div id="permissionNotice" class="warning-box" style="display:none; margin-bottom: 10px;">
+        ⚠ Tài khoản của bạn không có quyền chỉnh sửa loại lịch này. Chỉ Văn phòng mới có quyền cập nhật.
     </div>
 
     <div id="inputForm" class="form-grid">
         <div id="box-holiday-name" style="display:none;" class="full-width">
             <label>Tên dịp Lễ/Tết:</label>
-            <input type="text" id="holidayName" placeholder="VD: TẾT NGUYÊN ĐÁN ẤT TỴ 2025">
+            <input type="text" id="holidayName">
         </div>
         <div>
             <label id="dateLabel">Ngày thực hiện:</label>
@@ -87,7 +91,7 @@
         </div>
         <div id="box-time">
             <label>Thời gian:</label>
-            <input type="text" id="timeInput" placeholder="Nhập giờ công tác">
+            <input type="text" id="timeInput" placeholder="Sáng 7h30...">
         </div>
         
         <div class="full-width" id="directFields" style="display:none; border-top: 1px dashed #ccc; padding-top: 10px;">
@@ -97,7 +101,7 @@
                 <div><label>Trực Nghiệp vụ:</label><select id="sel-nv"></select></div>
                 <div><label>Trực Văn phòng:</label><select id="sel-vp"></select></div>
                 <div><label>Trực Lái xe:</label><select id="sel-lx"></select></div>
-                <div class="full-width"><label>Trực Bảo vệ (Tự nhập tên):</label><input type="text" id="inp-bv"></div>
+                <div class="full-width"><label>Trực Bảo vệ:</label><input type="text" id="inp-bv"></div>
             </div>
         </div>
 
@@ -106,38 +110,20 @@
             <textarea id="contentInput" rows="3"></textarea>
         </div>
         
-        <div class="full-width">
+        <div class="full-width" id="formActions">
             <button class="btn" id="btnSave">Lưu cập nhật</button>
             <button class="btn btn-green" onclick="window.print()">Xuất bản in (PDF)</button>
-            <button class="btn" style="float:right; background:#d9534f" id="btnDelete">Xóa ngày này</button>
+            <button class="btn" style="float:right; background:#d9534f" id="btnDelete">Xóa dữ liệu ngày này</button>
         </div>
     </div>
 
     <div id="staffForm" class="staff-manager" style="display:none;">
-        <h3 style="margin-top:0">Cập nhật danh sách cán bộ trực</h3>
-        <p style="font-size: 10pt; color: #666;">* Lưu ý: Nhập Tên - Chức vụ - SĐT để khi chọn ở màn hình nhập liệu sẽ tự điền đầy đủ.</p>
+        <h3 style="margin-top:0">Cập nhật danh sách cán bộ</h3>
         <div class="form-grid">
-            <div>
-                <label>Nhóm:</label>
-                <select id="staffGroup">
-                    <option value="ld">Lãnh đạo</option>
-                    <option value="tc">Trưởng ca</option>
-                    <option value="nv">Nghiệp vụ</option>
-                    <option value="vp">Văn phòng</option>
-                    <option value="lx">Lái xe</option>
-                </select>
-            </div>
-            <div>
-                <label>Họ tên và Chức vụ:</label>
-                <input type="text" id="staffName" placeholder="VD: Nguyễn Văn A - Kiểm sát viên">
-            </div>
-            <div class="full-width">
-                <label>Số điện thoại:</label>
-                <input type="text" id="staffPhone" placeholder="VD: 0909.xxx.xxx">
-            </div>
-            <div class="full-width">
-                <button class="btn btn-green" id="btnAddStaff">Thêm vào danh sách</button>
-            </div>
+            <div><label>Nhóm:</label><select id="staffGroup"><option value="ld">Lãnh đạo</option><option value="tc">Trưởng ca</option><option value="nv">Nghiệp vụ</option><option value="vp">Văn phòng</option><option value="lx">Lái xe</option></select></div>
+            <div><label>Họ tên và Chức vụ:</label><input type="text" id="staffName"></div>
+            <div class="full-width"><label>Số điện thoại:</label><input type="text" id="staffPhone"></div>
+            <div class="full-width"><button class="btn btn-green" id="btnAddStaff">Thêm vào danh sách</button></div>
         </div>
         <div id="staffListDisplay" style="margin-top:15px; background: white; padding: 10px; border: 1px solid #ccc;"></div>
     </div>
@@ -159,20 +145,13 @@
             <div id="topDate" style="font-style: italic; margin-top: 8px;"></div>
         </div>
     </div>
-
     <div class="main-title" id="pTitle">LỊCH CÔNG TÁC TUẦN</div>
     <div class="sub-title" id="pRange"></div>
-    <div id="pNote" style="text-align:center; font-style:italic; font-size: 11pt; margin-bottom: 15px; display:none;">
-        (Theo Quy định số 01/QĐ-VKSTC ngày 09/01/2019 của VKSND tối cao)
-    </div>
-
+    <div id="pNote" style="text-align:center; font-style:italic; font-size: 11pt; margin-bottom: 15px; display:none;">(Theo Quy định số 01/QĐ-VKSTC ngày 09/01/2019 của VKSND tối cao)</div>
     <div id="scheduleBody"></div>
-
     <div style="margin-top: 30px; display: flex; justify-content: flex-end; text-align: center;">
         <div style="width: 300px;">
-            <b id="s1">TL. VIỆN TRƯỞNG</b><br>
-            <b id="s2">CHÁNH VĂN PHÒNG</b><br><br><br><br><br>
-            <b id="s3">Vũ Phương Liên</b>
+            <b id="s1">TL. VIỆN TRƯỞNG</b><br><b id="s2">CHÁNH VĂN PHÒNG</b><br><br><br><br><br><b id="s3">Vũ Phương Liên</b>
         </div>
     </div>
 </div>
@@ -181,7 +160,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    // --- CẤU HÌNH FIREBASE (DÁN THÔNG TIN CỦA BẠN VÀO ĐÂY) ---
+    // --- CẤU HÌNH FIREBASE ---
     const firebaseConfig = {
         apiKey: "AIzaSy...",
         authDomain: "du-an-cua-ban.firebaseapp.com",
@@ -199,11 +178,10 @@
     
     let currentTab = 'tuan';
     let currentUser = "";
-    let currentWeekKey = ""; // Dùng làm key để lưu trữ theo tuần trên Firebase
+    let currentWeekKey = "";
     let db = { passwords: {}, staff: { ld: [], tc: [], nv: [], vp: [], lx: [] } };
-    let weekData = {}; // Dữ liệu của tuần đang chọn
+    let weekData = {};
 
-    // 1. XỬ LÝ NGÀY THÁNG VÀ TUẦN
     function getWeekNumber(d) {
         d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
         d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
@@ -213,16 +191,11 @@
 
     const weekPicker = document.getElementById('weekPicker');
     const now = new Date();
-    // Khởi tạo picker tuần hiện tại
-    const curYear = now.getFullYear();
-    const curWeek = getWeekNumber(now);
-    weekPicker.value = `${curYear}-W${curWeek < 10 ? '0' + curWeek : curWeek}`;
+    weekPicker.value = `${now.getFullYear()}-W${getWeekNumber(now) < 10 ? '0' + getWeekNumber(now) : getWeekNumber(now)}`;
 
     function updateWeekDisplay() {
-        const val = weekPicker.value; // Dạng "2024-W05"
+        const val = weekPicker.value;
         currentWeekKey = val.replace("-W", "_");
-        
-        // Tính danh sách ngày trong tuần đó
         const [year, week] = val.split("-W");
         const firstDayOfYear = new Date(year, 0, 1);
         const days = (week - 1) * 7;
@@ -235,19 +208,14 @@
             let name = (i==5?"Thứ Bảy":i==6?"Chủ Nhật":"Thứ " + ["Hai","Ba","Tư","Năm","Sáu"][i]);
             window.currentWeekDays.push({ label: name, date: d.toLocaleDateString('vi-VN') });
         }
-
         document.getElementById('docNum').innerText = `Số: ${parseInt(week)}/LCT`;
-        
-        // Tải dữ liệu của tuần này từ Firebase
         onValue(ref(database, 'data_weeks/' + currentWeekKey), (snapshot) => {
             weekData = snapshot.val() || { tuan: {}, dem: {}, cuoituan: {}, le: { data: {}, name: "" } };
             render();
         });
     }
-
     weekPicker.onchange = updateWeekDisplay;
 
-    // 2. LẮNG NGHE DANH SÁCH CÁN BỘ VÀ MẬT KHẨU
     onValue(ref(database, 'vks_settings'), (snapshot) => {
         const settings = snapshot.val();
         if(settings) {
@@ -262,20 +230,28 @@
         ['ld', 'tc', 'nv', 'vp', 'lx'].forEach(role => {
             const sel = document.getElementById('sel-' + role);
             sel.innerHTML = '<option value="">-- Chọn cán bộ --</option>';
-            if(db.staff[role]) {
-                db.staff[role].forEach(item => {
-                    sel.add(new Option(`${item.name} (${item.phone})`, `${item.name}|${item.phone}`));
-                });
-            }
+            if(db.staff[role]) db.staff[role].forEach(item => sel.add(new Option(`${item.name} (${item.phone})`, `${item.name}|${item.phone}`)));
         });
     }
 
-    // 3. XỬ LÝ TAB VÀ GIAO DIỆN
     window.setTab = function(t) {
+        // --- PHÂN QUYỀN TẠI ĐÂY ---
+        const isVP = (currentUser === "Văn phòng");
+        
+        // Nếu không phải VP mà cố bấm vào các tab trực hoặc quản lý cán bộ
+        if (!isVP && (t === 'dem' || t === 'cuoituan' || t === 'le' || t === 'staff')) {
+            document.getElementById('permissionNotice').style.display = 'block';
+            document.getElementById('formActions').style.display = 'none'; // Ẩn nút lưu
+            document.getElementById('inputForm').style.opacity = '0.6'; // Làm mờ form nhập
+        } else {
+            document.getElementById('permissionNotice').style.display = 'none';
+            document.getElementById('formActions').style.display = 'block';
+            document.getElementById('inputForm').style.opacity = '1';
+        }
+
         currentTab = t;
         document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
         document.getElementById('t-' + t).classList.add('active');
-        
         document.getElementById('inputForm').style.display = (t === 'staff') ? 'none' : 'grid';
         document.getElementById('staffForm').style.display = (t === 'staff') ? 'block' : 'none';
 
@@ -290,9 +266,8 @@
 
         const dSel = document.getElementById('dateSelect');
         const cDate = document.getElementById('customDate');
-        if(t === 'le') {
-            dSel.style.display = 'none'; cDate.style.display = 'block';
-        } else {
+        if(t === 'le') { dSel.style.display = 'none'; cDate.style.display = 'block'; }
+        else {
             dSel.style.display = 'block'; cDate.style.display = 'none';
             dSel.innerHTML = "";
             const list = (t === 'cuoituan' ? [5,6] : t === 'dem' ? [0,1,2,3,4] : [0,1,2,3,4,5,6]);
@@ -305,15 +280,12 @@
         let h = "";
         if(currentTab === 'le') {
             document.getElementById('pTitle').innerText = weekData.le.name || "THÔNG BÁO LỊCH TRỰC LỄ";
-            if(weekData.le.data) {
-                Object.keys(weekData.le.data).sort().forEach(day => h += renderDirectBlock(day.toUpperCase(), weekData.le.data[day]));
-            }
+            if(weekData.le.data) Object.keys(weekData.le.data).sort().forEach(day => h += renderDirectBlock(day.toUpperCase(), weekData.le.data[day]));
         } else {
             const titles = { tuan: "LỊCH CÔNG TÁC TUẦN", dem: "LỊCH TRỰC ĐÊM", cuoituan: "LỊCH TRỰC THỨ BẢY - CHỦ NHẬT" };
             document.getElementById('pTitle').innerText = titles[currentTab] || "";
             const list = currentTab === 'cuoituan' ? [5,6] : currentTab === 'dem' ? [0,1,2,3,4] : [0,1,2,3,4,5,6];
             document.getElementById('pRange').innerText = `(Từ ngày ${window.currentWeekDays[list[0]].date} đến ngày ${window.currentWeekDays[list[list.length-1]].date})`;
-            
             list.forEach(i => {
                 const dayHeader = `${window.currentWeekDays[i].label.toUpperCase()} NGÀY ${window.currentWeekDays[i].date}`;
                 const data = weekData[currentTab] ? weekData[currentTab][i] : null;
@@ -343,29 +315,40 @@
         return html;
     }
 
-    // 4. XỬ LÝ LƯU DỮ LIỆU
     document.getElementById('btnSave').onclick = () => {
+        // Kiểm tra quyền lần cuối trước khi ghi
+        const isVP = (currentUser === "Văn phòng");
+        if (!isVP && currentTab !== 'tuan') return alert("Bạn không có quyền thực hiện thao tác này!");
+
         let d = (currentTab === 'le') ? document.getElementById('customDate').value : document.getElementById('dateSelect').value;
         if(currentTab === 'tuan') {
+            if(!weekData.tuan) weekData.tuan = {};
             if(!weekData.tuan[d]) weekData.tuan[d] = [];
             weekData.tuan[d].push({ u: currentUser, t: document.getElementById('timeInput').value, c: document.getElementById('contentInput').value });
         } else {
             if(currentTab === 'le') weekData.le.name = document.getElementById('holidayName').value;
             let target = (currentTab === 'le') ? weekData.le.data : weekData[currentTab];
-            const getVal = (id) => {
-                const v = document.getElementById('sel-' + id).value;
-                return v ? v.replace('|', ' - ĐT: ') : "";
-            };
-            target[d] = {
-                ld: getVal('ld'), tc: getVal('tc'), nv: getVal('nv'),
-                vp: getVal('vp'), lx: getVal('lx'), bv: document.getElementById('inp-bv').value
-            };
+            const getVal = (id) => { const v = document.getElementById('sel-' + id).value; return v ? v.replace('|', ' - ĐT: ') : ""; };
+            target[d] = { ld: getVal('ld'), tc: getVal('tc'), nv: getVal('nv'), vp: getVal('vp'), lx: getVal('lx'), bv: document.getElementById('inp-bv').value };
         }
-        set(ref(database, 'data_weeks/' + currentWeekKey), weekData).then(() => alert("Đã lưu!"));
+        set(ref(database, 'data_weeks/' + currentWeekKey), weekData).then(() => alert("Đã cập nhật dữ liệu thành công!"));
     };
 
-    // 5. QUẢN LÝ CÁN BỘ
+    document.getElementById('btnDelete').onclick = () => {
+        const isVP = (currentUser === "Văn phòng");
+        if (!isVP && currentTab !== 'tuan') return alert("Bạn không có quyền xóa!");
+        
+        let d = (currentTab === 'le') ? document.getElementById('customDate').value : document.getElementById('dateSelect').value;
+        if(confirm("Xác nhận xóa dữ liệu ngày này?")) {
+            if(currentTab === 'tuan') weekData.tuan[d] = [];
+            else if(currentTab === 'le') delete weekData.le.data[d];
+            else weekData[currentTab][d] = null;
+            set(ref(database, 'data_weeks/' + currentWeekKey), weekData);
+        }
+    };
+
     document.getElementById('btnAddStaff').onclick = () => {
+        if(currentUser !== "Văn phòng") return;
         const group = document.getElementById('staffGroup').value;
         const name = document.getElementById('staffName').value;
         const phone = document.getElementById('staffPhone').value;
@@ -373,29 +356,25 @@
         if(!db.staff[group]) db.staff[group] = [];
         db.staff[group].push({ name, phone });
         set(ref(database, 'vks_settings/staff'), db.staff);
-        document.getElementById('staffName').value = "";
-        document.getElementById('staffPhone').value = "";
+        document.getElementById('staffName').value = ""; document.getElementById('staffPhone').value = "";
     };
 
-    function renderStaffList() {
-        let h = "<table border='1' style='width:100%; border-collapse: collapse;'><tr><th>Nhóm</th><th>Họ tên & Chức vụ</th><th>SĐT</th><th>Xóa</th></tr>";
-        ['ld','tc','nv','vp','lx'].forEach(g => {
-            if(db.staff[g]) {
-                db.staff[g].forEach((item, idx) => {
-                    h += `<tr><td>${g.toUpperCase()}</td><td>${item.name}</td><td>${item.phone}</td>
-                    <td><button onclick="window.removeStaff('${g}', ${idx})">Xóa</button></td></tr>`;
-                });
-            }
-        });
-        document.getElementById('staffListDisplay').innerHTML = h + "</table>";
-    }
-
     window.removeStaff = (group, idx) => {
+        if(currentUser !== "Văn phòng") return;
         db.staff[group].splice(idx, 1);
         set(ref(database, 'vks_settings/staff'), db.staff);
     };
 
-    // 6. ĐĂNG NHẬP
+    function renderStaffList() {
+        let h = "<table border='1' style='width:100%; border-collapse: collapse;'><tr><th>Nhóm</th><th>Họ tên</th><th>SĐT</th><th>Xóa</th></tr>";
+        ['ld','tc','nv','vp','lx'].forEach(g => {
+            if(db.staff[g]) db.staff[g].forEach((item, idx) => {
+                h += `<tr><td>${g.toUpperCase()}</td><td>${item.name}</td><td>${item.phone}</td><td><button onclick="window.removeStaff('${g}', ${idx})">Xóa</button></td></tr>`;
+            });
+        });
+        document.getElementById('staffListDisplay').innerHTML = h + "</table>";
+    }
+
     const loginFn = () => {
         let selectedUser = document.getElementById('userSelect').value;
         let enteredPass = document.getElementById('passInput').value;
@@ -405,6 +384,10 @@
             document.getElementById('loginSection').style.display='none';
             document.getElementById('mainSection').style.display='block';
             document.getElementById('userLabel').innerText = "Đơn vị: " + currentUser;
+            
+            // Hiển thị tab Quản lý cán bộ nếu là Văn phòng
+            if(currentUser === "Văn phòng") document.getElementById('t-staff').style.display = 'block';
+            
             updateWeekDisplay();
             setTab('tuan');
         } else alert("Sai mật khẩu!");
@@ -412,11 +395,9 @@
     document.getElementById('btnLogin').onclick = loginFn;
     document.getElementById('passInput').onkeyup = (e) => { if(e.key === "Enter") loginFn(); };
 
-    // Khởi tạo select đơn vị
     const uSel = document.getElementById('userSelect');
     users.forEach(u => uSel.add(new Option(u, u)));
     document.getElementById('topDate').innerText = `Cần Thơ, ngày ${now.getDate()} tháng ${now.getMonth()+1} năm ${now.getFullYear()}`;
-    
 </script>
 </body>
 </html>
