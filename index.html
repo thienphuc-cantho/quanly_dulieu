@@ -2,15 +2,23 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>ịch công tác VKSND TP.Cần Thơ 1.0</title>
+    <title>Lịch công tác VKSND TP.Cần Thơ</title>
     <style>
-        body { font-family: "Times New Roman", Times, serif; background:#f4f7f6; margin:0; padding:20px; line-height: 1.4; color: black; }
+        body { font-family: "Times New Roman", Times, serif; background:#f4f7f6; margin:0; padding:20px; line-height: 1.5; color: black; }
         .no-print { max-width: 1100px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; border-top: 5px solid #da251d; }
         .tab-box { display: flex; gap: 5px; margin: 15px 0; }
         .tab-item { flex: 1; padding: 10px; text-align: center; background: #e0e0e0; cursor: pointer; font-weight: bold; border-radius: 5px; border: 1px solid #ccc; font-size: 10pt; }
         .tab-item.active { background: #0056b3; color: white; border-color: #0056b3; }
         
-        .print-page { width: 210mm; min-height: 297mm; padding: 20mm 10mm 20mm 25mm; margin: auto; background: white; box-sizing: border-box; font-size: 13pt; border: 1px solid #eee; position: relative; }
+        /* CẤU HÌNH LỀ A4 CHUẨN: Trên 2, Dưới 2, Trái 3, Phải 1.5 */
+        .print-page { 
+            width: 210mm; min-height: 297mm; 
+            padding-top: 20mm; padding-bottom: 20mm; 
+            padding-left: 30mm; padding-right: 15mm; 
+            margin: auto; background: white; box-sizing: border-box; 
+            font-size: 13pt; border: 1px solid #eee; position: relative; 
+        }
+        
         .flex-header { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
         .header-left { width: 45%; text-align: center; white-space: nowrap; }
         .header-right { width: 55%; text-align: center; white-space: nowrap; }
@@ -19,8 +27,9 @@
         .main-title { text-align: center; font-weight: bold; font-size: 15pt; margin: 20px 0 5px 0; text-transform: uppercase; }
         .sub-title { text-align: center; font-weight: bold; margin-bottom: 15px; }
         
-        .day-block { margin-top: 20px; }
+        .day-block { margin-top: 15px; }
         .day-head { font-weight: bold; text-transform: uppercase; text-decoration: underline; margin-bottom: 5px; }
+        /* CĂN LỀ ĐỀU DÒNG (JUSTIFY) */
         .day-content { text-align: justify; margin-bottom: 10px; }
         .direct-item { margin-bottom: 3px; }
 
@@ -29,10 +38,8 @@
         .full-width { grid-column: span 2; }
         .btn { padding: 10px 20px; background: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .btn-green { background: #28a745; }
-        .btn-orange { background: #f0ad4e; }
         .btn-gray { background: #666; }
         .warning-box { grid-column: span 2; padding: 15px; background: #fff3f3; color: #d9534f; border: 1px solid #f5c6cb; border-radius: 4px; text-align: center; font-weight: bold; }
-        
         .staff-manager { margin-top: 20px; padding: 15px; border: 1px solid #444; border-radius: 5px; background: #fffde7; }
 
         @media print {
@@ -44,27 +51,25 @@
 </head>
 <body>
 
-<div id="loginSection" class="no-print" style="text-align:center; padding: 50px;">
-    <h2 style="color:#da251d">VIỆN KIỂM SÁT NHÂN DÂN THÀNH PHỐ CẦN THƠ</h2>
-    <div style="max-width: 350px; margin: auto; text-align: left;">
-        <label>Đơn vị:</label>
-        <select id="userSelect"></select>
-        <label style="display:block; margin-top:10px;">Mật khẩu:</label>
-        <input type="password" id="passInput">
-        <button class="btn" style="width:100%; margin-top:15px;" id="btnLogin">Đăng nhập</button>
-    </div>
-</div>
-
-<div id="mainSection" class="no-print" style="display:none;">
+<div class="no-print">
     <div style="display:flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 10px;">
         <div>
-            <b id="userLabel" style="color:#0056b3"></b> | 
+            <b id="statusLabel" style="color:#666">Chế độ: Đang xem lịch</b> | 
             <b>Chọn xem tuần:</b> <input type="week" id="weekPicker" style="width: 200px; display: inline-block;">
         </div>
-        <div>
-            <button class="btn btn-orange" id="btnChangePass">Đổi mật khẩu</button>
+        <div id="loginGroup">
+            <button class="btn" onclick="showLogin()">Đăng nhập để cập nhật</button>
+        </div>
+        <div id="logoutGroup" style="display:none;">
+            <b id="userLabel" style="color:#0056b3"></b> | 
             <button class="btn btn-gray" onclick="location.reload()">Đăng xuất</button>
         </div>
+    </div>
+
+    <div id="loginBox" style="display:none; margin-top:15px; padding:15px; border:1px solid #ccc; background:#eee;">
+        <select id="userSelect" style="width:200px"></select>
+        <input type="password" id="passInput" placeholder="Mật khẩu" style="width:150px">
+        <button class="btn" id="btnLogin">Xác nhận</button>
     </div>
 
     <div class="tab-box">
@@ -72,67 +77,69 @@
         <div id="t-dem" class="tab-item" onclick="setTab('dem')">LỊCH TRỰC ĐÊM</div>
         <div id="t-cuoituan" class="tab-item" onclick="setTab('cuoituan')">LỊCH TRỰC T7-CN</div>
         <div id="t-le" class="tab-item" onclick="setTab('le')">LỊCH TRỰC LỄ</div>
-        <div id="t-staff" class="tab-item" onclick="setTab('staff')" style="background: #333; color: white; display: none;">DANH SÁCH CÁN BỘ</div>
+        <div id="t-staff" class="tab-item" onclick="setTab('staff')" style="background: #333; color: white; display: none;">QUẢN LÝ CÁN BỘ</div>
     </div>
 
     <div id="permissionNotice" class="warning-box" style="display:none; margin-bottom: 10px;">
-        ⚠ Tài khoản của bạn không có quyền chỉnh sửa loại lịch này. Chỉ Văn phòng mới có quyền cập nhật.
+        ⚠ Tài khoản của bạn không có quyền chỉnh sửa loại lịch này. Chỉ Văn phòng mới được cập nhật.
     </div>
 
-    <div id="inputForm" class="form-grid">
-        <div id="box-holiday-name" style="display:none;" class="full-width">
-            <label>Tên dịp Lễ/Tết:</label>
-            <input type="text" id="holidayName">
-        </div>
-        <div>
-            <label id="dateLabel">Ngày thực hiện:</label>
-            <select id="dateSelect"></select>
-            <input type="text" id="customDate" style="display:none;" placeholder="VD: 25/01 (Thứ Bảy)">
-        </div>
-        <div id="box-time">
-            <label>Thời gian:</label>
-            <input type="text" id="timeInput" placeholder="Sáng 7h30...">
-        </div>
-        
-        <div class="full-width" id="directFields" style="display:none; border-top: 1px dashed #ccc; padding-top: 10px;">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <div><label>Trực Lãnh đạo:</label><select id="sel-ld"></select></div>
-                <div><label>Trực Trưởng ca:</label><select id="sel-tc"></select></div>
-                <div><label>Trực Nghiệp vụ:</label><select id="sel-nv"></select></div>
-                <div><label>Trực Văn phòng:</label><select id="sel-vp"></select></div>
-                <div><label>Trực Lái xe:</label><select id="sel-lx"></select></div>
-                <div class="full-width"><label>Trực Bảo vệ:</label><input type="text" id="inp-bv"></div>
+    <div id="inputArea" style="display:none;">
+        <div id="inputForm" class="form-grid">
+            <div id="box-holiday-name" style="display:none;" class="full-width">
+                <label>Tên dịp Lễ/Tết:</label>
+                <input type="text" id="holidayName">
+            </div>
+            <div>
+                <label id="dateLabel">Ngày thực hiện:</label>
+                <select id="dateSelect"></select>
+                <input type="text" id="customDate" style="display:none;" placeholder="VD: 25/01 (Thứ Bảy)">
+            </div>
+            <div id="box-time">
+                <label>Thời gian:</label>
+                <input type="text" id="timeInput" placeholder="Sáng 7h30...">
+            </div>
+            <div class="full-width" id="directFields" style="display:none; border-top: 1px dashed #ccc; padding-top: 10px;">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div><label>Trực Lãnh đạo:</label><select id="sel-ld"></select></div>
+                    <div><label>Trực Trưởng ca:</label><select id="sel-tc"></select></div>
+                    <div><label>Trực Nghiệp vụ:</label><select id="sel-nv"></select></div>
+                    <div><label>Trực Văn phòng:</label><select id="sel-vp"></select></div>
+                    <div><label>Trực Lái xe:</label><select id="sel-lx"></select></div>
+                    <div class="full-width"><label>Trực Bảo vệ:</label><input type="text" id="inp-bv"></div>
+                </div>
+            </div>
+            <div class="full-width" id="box-content">
+                <label>Nội dung công tác:</label>
+                <textarea id="contentInput" rows="3"></textarea>
+            </div>
+            <div class="full-width" id="formActions">
+                <button class="btn" id="btnSave">Lưu cập nhật</button>
+                <button class="btn" style="float:right; background:#d9534f" id="btnDelete">Xóa dữ liệu ngày này</button>
             </div>
         </div>
 
-        <div class="full-width" id="box-content">
-            <label>Nội dung công tác:</label>
-            <textarea id="contentInput" rows="3"></textarea>
-        </div>
-        
-        <div class="full-width" id="formActions">
-            <button class="btn" id="btnSave">Lưu cập nhật</button>
-            <button class="btn btn-green" onclick="window.print()">Xuất bản in (PDF)</button>
-            <button class="btn" style="float:right; background:#d9534f" id="btnDelete">Xóa dữ liệu ngày này</button>
+        <div id="staffForm" class="staff-manager" style="display:none;">
+            <h3 style="margin-top:0">Danh sách cán bộ</h3>
+            <div class="form-grid">
+                <div><label>Nhóm:</label><select id="staffGroup"><option value="ld">Lãnh đạo</option><option value="tc">Trưởng ca</option><option value="nv">Nghiệp vụ</option><option value="vp">Văn phòng</option><option value="lx">Lái xe</option></select></div>
+                <div><label>Họ tên:</label><input type="text" id="staffName"></div>
+                <div class="full-width"><label>Số điện thoại:</label><input type="text" id="staffPhone"></div>
+                <div class="full-width"><button class="btn btn-green" id="btnAddStaff">Thêm cán bộ</button></div>
+            </div>
+            <div id="staffListDisplay" style="margin-top:15px; background: white; padding: 10px; border: 1px solid #ccc;"></div>
         </div>
     </div>
-
-    <div id="staffForm" class="staff-manager" style="display:none;">
-        <h3 style="margin-top:0">Cập nhật danh sách cán bộ</h3>
-        <div class="form-grid">
-            <div><label>Nhóm:</label><select id="staffGroup"><option value="ld">Lãnh đạo</option><option value="tc">Trưởng ca</option><option value="nv">Nghiệp vụ</option><option value="vp">Văn phòng</option><option value="lx">Lái xe</option></select></div>
-            <div><label>Họ tên và Chức vụ:</label><input type="text" id="staffName"></div>
-            <div class="full-width"><label>Số điện thoại:</label><input type="text" id="staffPhone"></div>
-            <div class="full-width"><button class="btn btn-green" id="btnAddStaff">Thêm vào danh sách</button></div>
-        </div>
-        <div id="staffListDisplay" style="margin-top:15px; background: white; padding: 10px; border: 1px solid #ccc;"></div>
+    
+    <div style="margin-top: 15px; text-align: center;">
+        <button class="btn btn-green" onclick="window.print()">Xuất bản in (PDF)</button>
     </div>
 </div>
 
 <div class="print-page">
     <div class="flex-header">
         <div class="header-left">
-            <div>VIỆT KIỂM SÁT NHÂN DÂN TỐI CAO</div>
+            <div>VIỆN KIỂM SÁT NHÂN DÂN TỐI CAO</div>
             <div class="title-bold">VIỆN KIỂM SÁT NHÂN DÂN</div>
             <div class="title-bold">THÀNH PHỐ CẦN THƠ</div>
             <div id="docNum" style="margin-top:5px; font-weight: bold;">Số: .../LCT</div>
@@ -160,26 +167,22 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    // --- CẤU HÌNH FIREBASE ---
     const firebaseConfig = {
-      apiKey: "AIzaSyDMCK_fMLGgcL7pMo3iQZUf3rdjmwF9E_8",
-      authDomain: "lichcongtac-348b6.firebaseapp.com",
-      databaseURL: "https://lichcongtac-348b6-default-rtdb.firebaseio.com",
-      projectId: "lichcongtac-348b6",
-      storageBucket: "lichcongtac-348b6.firebasestorage.app",
-      messagingSenderId: "648001782022",
-      appId: "1:648001782022:web:f8bb081efa5b606c31de87",
-      measurementId: "G-LNG24HCDF8"
+        apiKey: "AIzaSyDMCK_fMLGgcL7pMo3iQZUf3rdjmwF9E_8",
+        authDomain: "lichcongtac-348b6.firebaseapp.com",
+        databaseURL: "https://lichcongtac-348b6-default-rtdb.firebaseio.com",
+        projectId: "lichcongtac-348b6",
+        storageBucket: "lichcongtac-348b6.firebasestorage.app",
+        messagingSenderId: "648001782022",
+        appId: "1:648001782022:web:f8bb081efa5b606c31de87"
     };
 
-    // Khởi tạo Firebase
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
-
     const users = ["Văn phòng", "Viện trưởng", "Phó viện trưởng Lê Nguyễn Trường Sơn", "Phó viện trưởng Phạm Chi Lăng", "Phó viện trưởng Nguyễn Thanh Sang", "Phòng 1", "Phòng 2", "Phòng 7", "Phòng 8", "Phòng 9", "Phòng 10", "Phòng 11", "Phòng 15", "Thanh tra - Khiếu tố", "VKSND KV1", "VKSND KV2", "VKSND KV3", "VKSND KV4", "VKSND KV5", "VKSND KV6", "VKSND KV7", "VKSND KV8", "VKSND KV9", "VKSND KV10", "VKSND KV11", "VKSND KV12", "VKSND KV13", "VKSND KV14"];
     
     let currentTab = 'tuan';
-    let currentUser = "";
+    let currentUser = ""; // Trống nghĩa là khách đang xem
     let currentWeekKey = "";
     let db = { passwords: {}, staff: { ld: [], tc: [], nv: [], vp: [], lx: [] } };
     let weekData = {};
@@ -228,34 +231,30 @@
         }
     });
 
-    function updateStaffSelectors() {
-        ['ld', 'tc', 'nv', 'vp', 'lx'].forEach(role => {
-            const sel = document.getElementById('sel-' + role);
-            if(sel) {
-                sel.innerHTML = '<option value="">-- Chọn cán bộ --</option>';
-                if(db.staff[role]) db.staff[role].forEach(item => sel.add(new Option(`${item.name} (${item.phone})`, `${item.name}|${item.phone}`)));
-            }
-        });
-    }
+    window.showLogin = () => { document.getElementById('loginBox').style.display = 'block'; };
 
     window.setTab = function(t) {
+        currentTab = t;
         const isVP = (currentUser === "Văn phòng");
-        
-        if (!isVP && (t === 'dem' || t === 'cuoituan' || t === 'le' || t === 'staff')) {
-            document.getElementById('permissionNotice').style.display = 'block';
-            document.getElementById('formActions').style.display = 'none'; 
-            document.getElementById('inputForm').style.opacity = '0.6'; 
+        const isLoggedIn = (currentUser !== "");
+
+        // Quản lý hiển thị form nhập
+        if (!isLoggedIn) {
+            document.getElementById('inputArea').style.display = 'none';
         } else {
-            document.getElementById('permissionNotice').style.display = 'none';
-            document.getElementById('formActions').style.display = 'block';
-            document.getElementById('inputForm').style.opacity = '1';
+            document.getElementById('inputArea').style.display = 'block';
+            if (!isVP && (t !== 'tuan')) {
+                document.getElementById('permissionNotice').style.display = 'block';
+                document.getElementById('inputForm').style.display = 'none';
+            } else {
+                document.getElementById('permissionNotice').style.display = 'none';
+                document.getElementById('inputForm').style.display = (t === 'staff') ? 'none' : 'grid';
+                document.getElementById('staffForm').style.display = (t === 'staff') ? 'block' : 'none';
+            }
         }
 
-        currentTab = t;
         document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
         document.getElementById('t-' + t).classList.add('active');
-        document.getElementById('inputForm').style.display = (t === 'staff') ? 'none' : 'grid';
-        document.getElementById('staffForm').style.display = (t === 'staff') ? 'block' : 'none';
 
         if(t === 'staff') return;
 
@@ -280,6 +279,8 @@
 
     function render() {
         let h = "";
+        const defaultText = "- Lãnh đạo Viện và các phòng nghiệp vụ làm việc bình thường.";
+        
         if(currentTab === 'le') {
             document.getElementById('pTitle').innerText = weekData.le.name || "THÔNG BÁO LỊCH TRỰC LỄ";
             if(weekData.le.data) Object.keys(weekData.le.data).sort().forEach(day => h += renderDirectBlock(day.toUpperCase(), weekData.le.data[day]));
@@ -288,12 +289,15 @@
             document.getElementById('pTitle').innerText = titles[currentTab] || "";
             const list = currentTab === 'cuoituan' ? [5,6] : currentTab === 'dem' ? [0,1,2,3,4] : [0,1,2,3,4,5,6];
             document.getElementById('pRange').innerText = `(Từ ngày ${window.currentWeekDays[list[0]].date} đến ngày ${window.currentWeekDays[list[list.length-1]].date})`;
+            
             list.forEach(i => {
                 const dayHeader = `${window.currentWeekDays[i].label.toUpperCase()} NGÀY ${window.currentWeekDays[i].date}`;
                 const data = weekData[currentTab] ? weekData[currentTab][i] : null;
+                
                 if(currentTab === 'tuan') {
                     let items = data || [];
-                    let txt = items.length ? items.map(it => `${it.t ? it.t + ": " : ""}${it.c} (${it.u})`).join("\n") : "- Lãnh đạo Viện và các phòng nghiệp vụ làm việc bình thường.";
+                    // Luôn hiển thị câu mặc định ở cuối mỗi ngày
+                    let txt = items.length ? items.map(it => `${it.t ? it.t + ": " : ""}${it.c} (${it.u})`).join("\n") + "\n" + defaultText : defaultText;
                     h += `<div class="day-block"><div class="day-head">${dayHeader}</div><div class="day-content" style="white-space:pre-line;">${txt}</div></div>`;
                 } else h += renderDirectBlock(dayHeader, data);
             });
@@ -318,9 +322,7 @@
     }
 
     document.getElementById('btnSave').onclick = () => {
-        const isVP = (currentUser === "Văn phòng");
-        if (!isVP && currentTab !== 'tuan') return alert("Bạn không có quyền thực hiện thao tác này!");
-
+        if(currentUser === "") return alert("Hãy đăng nhập!");
         let d = (currentTab === 'le') ? document.getElementById('customDate').value : document.getElementById('dateSelect').value;
         if(currentTab === 'tuan') {
             if(!weekData.tuan) weekData.tuan = {};
@@ -332,15 +334,12 @@
             const getVal = (id) => { const v = document.getElementById('sel-' + id).value; return v ? v.replace('|', ' - ĐT: ') : ""; };
             target[d] = { ld: getVal('ld'), tc: getVal('tc'), nv: getVal('nv'), vp: getVal('vp'), lx: getVal('lx'), bv: document.getElementById('inp-bv').value };
         }
-        set(ref(database, 'data_weeks/' + currentWeekKey), weekData).then(() => alert("Đã cập nhật dữ liệu thành công!"));
+        set(ref(database, 'data_weeks/' + currentWeekKey), weekData).then(() => alert("Cập nhật thành công!"));
     };
 
     document.getElementById('btnDelete').onclick = () => {
-        const isVP = (currentUser === "Văn phòng");
-        if (!isVP && currentTab !== 'tuan') return alert("Bạn không có quyền xóa!");
-        
         let d = (currentTab === 'le') ? document.getElementById('customDate').value : document.getElementById('dateSelect').value;
-        if(confirm("Xác nhận xóa dữ liệu ngày này?")) {
+        if(confirm("Xác nhận xóa?")) {
             if(currentTab === 'tuan') weekData.tuan[d] = [];
             else if(currentTab === 'le') delete weekData.le.data[d];
             else weekData[currentTab][d] = null;
@@ -348,57 +347,46 @@
         }
     };
 
-    document.getElementById('btnAddStaff').onclick = () => {
-        if(currentUser !== "Văn phòng") return;
-        const group = document.getElementById('staffGroup').value;
-        const name = document.getElementById('staffName').value;
-        const phone = document.getElementById('staffPhone').value;
-        if(!name) return alert("Nhập tên cán bộ");
-        if(!db.staff[group]) db.staff[group] = [];
-        db.staff[group].push({ name, phone });
-        set(ref(database, 'vks_settings/staff'), db.staff);
-        document.getElementById('staffName').value = ""; document.getElementById('staffPhone').value = "";
+    const loginFn = () => {
+        let sel = document.getElementById('userSelect').value;
+        let pass = document.getElementById('passInput').value;
+        if (pass === (db.passwords[sel] || "vks123")) {
+            currentUser = sel;
+            document.getElementById('loginGroup').style.display='none';
+            document.getElementById('loginBox').style.display='none';
+            document.getElementById('logoutGroup').style.display='block';
+            document.getElementById('userLabel').innerText = currentUser;
+            document.getElementById('statusLabel').innerText = "Chế độ: ĐANG CẬP NHẬT";
+            if(currentUser === "Văn phòng") document.getElementById('t-staff').style.display = 'block';
+            setTab(currentTab);
+        } else alert("Sai mật khẩu!");
     };
+    document.getElementById('btnLogin').onclick = loginFn;
 
-    window.removeStaff = (group, idx) => {
-        if(currentUser !== "Văn phòng") return;
-        db.staff[group].splice(idx, 1);
-        set(ref(database, 'vks_settings/staff'), db.staff);
-    };
+    function updateStaffSelectors() {
+        ['ld', 'tc', 'nv', 'vp', 'lx'].forEach(role => {
+            const sel = document.getElementById('sel-' + role);
+            if(sel) {
+                sel.innerHTML = '<option value="">-- Chọn --</option>';
+                if(db.staff[role]) db.staff[role].forEach(it => sel.add(new Option(`${it.name} (${it.phone})`, `${it.name}|${it.phone}`)));
+            }
+        });
+    }
 
     function renderStaffList() {
         let h = "<table border='1' style='width:100%; border-collapse: collapse;'><tr><th>Nhóm</th><th>Họ tên</th><th>SĐT</th><th>Xóa</th></tr>";
         ['ld','tc','nv','vp','lx'].forEach(g => {
-            if(db.staff[g]) db.staff[g].forEach((item, idx) => {
-                h += `<tr><td>${g.toUpperCase()}</td><td>${item.name}</td><td>${item.phone}</td><td><button onclick="window.removeStaff('${g}', ${idx})">Xóa</button></td></tr>`;
+            if(db.staff[g]) db.staff[g].forEach((it, idx) => {
+                h += `<tr><td>${g.toUpperCase()}</td><td>${it.name}</td><td>${it.phone}</td><td><button onclick="window.removeStaff('${g}', ${idx})">Xóa</button></td></tr>`;
             });
         });
         document.getElementById('staffListDisplay').innerHTML = h + "</table>";
     }
 
-    const loginFn = () => {
-        let selectedUser = document.getElementById('userSelect').value;
-        let enteredPass = document.getElementById('passInput').value;
-        let correctPass = db.passwords[selectedUser] || "vks123";
-        if (enteredPass === correctPass) {
-            currentUser = selectedUser;
-            document.getElementById('loginSection').style.display='none';
-            document.getElementById('mainSection').style.display='block';
-            document.getElementById('userLabel').innerText = "Đơn vị: " + currentUser;
-            
-            if(currentUser === "Văn phòng") document.getElementById('t-staff').style.display = 'block';
-            
-            updateWeekDisplay();
-            setTab('tuan');
-        } else alert("Sai mật khẩu!");
-    };
-    document.getElementById('btnLogin').onclick = loginFn;
-    document.getElementById('passInput').onkeyup = (e) => { if(e.key === "Enter") loginFn(); };
-
-    // Khởi tạo danh sách đơn vị khi trang load xong
     const uSel = document.getElementById('userSelect');
     users.forEach(u => uSel.add(new Option(u, u)));
     document.getElementById('topDate').innerText = `Cần Thơ, ngày ${now.getDate()} tháng ${now.getMonth()+1} năm ${now.getFullYear()}`;
+    updateWeekDisplay();
 </script>
 </body>
 </html>
