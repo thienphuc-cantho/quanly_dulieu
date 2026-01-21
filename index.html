@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Phần mềm Lịch công tác VKSND TP.Cần Thơ 1.0</title>
+    <title>ịch công tác VKSND TP.Cần Thơ 1.0</title>
     <style>
         body { font-family: "Times New Roman", Times, serif; background:#f4f7f6; margin:0; padding:20px; line-height: 1.4; color: black; }
         .no-print { max-width: 1100px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; border-top: 5px solid #da251d; }
@@ -161,20 +161,20 @@
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     // --- CẤU HÌNH FIREBASE ---
-   const firebaseConfig = {
-  apiKey: "AIzaSyDMCK_fMLGgcL7pMo3iQZUf3rdjmwF9E_8",
-  authDomain: "lichcongtac-348b6.firebaseapp.com",
-  databaseURL: "https://lichcongtac-348b6-default-rtdb.firebaseio.com",
-  projectId: "lichcongtac-348b6",
-  storageBucket: "lichcongtac-348b6.firebasestorage.app",
-  messagingSenderId: "648001782022",
-  appId: "1:648001782022:web:f8bb081efa5b606c31de87",
-  measurementId: "G-LNG24HCDF8"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyDMCK_fMLGgcL7pMo3iQZUf3rdjmwF9E_8",
+      authDomain: "lichcongtac-348b6.firebaseapp.com",
+      databaseURL: "https://lichcongtac-348b6-default-rtdb.firebaseio.com",
+      projectId: "lichcongtac-348b6",
+      storageBucket: "lichcongtac-348b6.firebasestorage.app",
+      messagingSenderId: "648001782022",
+      appId: "1:648001782022:web:f8bb081efa5b606c31de87",
+      measurementId: "G-LNG24HCDF8"
+    };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+    // Khởi tạo Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
 
     const users = ["Văn phòng", "Viện trưởng", "Phó viện trưởng Lê Nguyễn Trường Sơn", "Phó viện trưởng Phạm Chi Lăng", "Phó viện trưởng Nguyễn Thanh Sang", "Phòng 1", "Phòng 2", "Phòng 7", "Phòng 8", "Phòng 9", "Phòng 10", "Phòng 11", "Phòng 15", "Thanh tra - Khiếu tố", "VKSND KV1", "VKSND KV2", "VKSND KV3", "VKSND KV4", "VKSND KV5", "VKSND KV6", "VKSND KV7", "VKSND KV8", "VKSND KV9", "VKSND KV10", "VKSND KV11", "VKSND KV12", "VKSND KV13", "VKSND KV14"];
     
@@ -231,20 +231,20 @@ const analytics = getAnalytics(app);
     function updateStaffSelectors() {
         ['ld', 'tc', 'nv', 'vp', 'lx'].forEach(role => {
             const sel = document.getElementById('sel-' + role);
-            sel.innerHTML = '<option value="">-- Chọn cán bộ --</option>';
-            if(db.staff[role]) db.staff[role].forEach(item => sel.add(new Option(`${item.name} (${item.phone})`, `${item.name}|${item.phone}`)));
+            if(sel) {
+                sel.innerHTML = '<option value="">-- Chọn cán bộ --</option>';
+                if(db.staff[role]) db.staff[role].forEach(item => sel.add(new Option(`${item.name} (${item.phone})`, `${item.name}|${item.phone}`)));
+            }
         });
     }
 
     window.setTab = function(t) {
-        // --- PHÂN QUYỀN TẠI ĐÂY ---
         const isVP = (currentUser === "Văn phòng");
         
-        // Nếu không phải VP mà cố bấm vào các tab trực hoặc quản lý cán bộ
         if (!isVP && (t === 'dem' || t === 'cuoituan' || t === 'le' || t === 'staff')) {
             document.getElementById('permissionNotice').style.display = 'block';
-            document.getElementById('formActions').style.display = 'none'; // Ẩn nút lưu
-            document.getElementById('inputForm').style.opacity = '0.6'; // Làm mờ form nhập
+            document.getElementById('formActions').style.display = 'none'; 
+            document.getElementById('inputForm').style.opacity = '0.6'; 
         } else {
             document.getElementById('permissionNotice').style.display = 'none';
             document.getElementById('formActions').style.display = 'block';
@@ -318,7 +318,6 @@ const analytics = getAnalytics(app);
     }
 
     document.getElementById('btnSave').onclick = () => {
-        // Kiểm tra quyền lần cuối trước khi ghi
         const isVP = (currentUser === "Văn phòng");
         if (!isVP && currentTab !== 'tuan') return alert("Bạn không có quyền thực hiện thao tác này!");
 
@@ -387,7 +386,6 @@ const analytics = getAnalytics(app);
             document.getElementById('mainSection').style.display='block';
             document.getElementById('userLabel').innerText = "Đơn vị: " + currentUser;
             
-            // Hiển thị tab Quản lý cán bộ nếu là Văn phòng
             if(currentUser === "Văn phòng") document.getElementById('t-staff').style.display = 'block';
             
             updateWeekDisplay();
@@ -397,6 +395,7 @@ const analytics = getAnalytics(app);
     document.getElementById('btnLogin').onclick = loginFn;
     document.getElementById('passInput').onkeyup = (e) => { if(e.key === "Enter") loginFn(); };
 
+    // Khởi tạo danh sách đơn vị khi trang load xong
     const uSel = document.getElementById('userSelect');
     users.forEach(u => uSel.add(new Option(u, u)));
     document.getElementById('topDate').innerText = `Cần Thơ, ngày ${now.getDate()} tháng ${now.getMonth()+1} năm ${now.getFullYear()}`;
