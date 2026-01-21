@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Lịch công tác VKSND TP.Cần Thơ (Ver 1.0)</title>
+    <title>Lịch công tác VKSND TP.Cần Thơ Ver 1.0</title>
     <style>
         body { font-family: "Times New Roman", Times, serif; background:#f4f7f6; margin:0; padding:20px; line-height: 1.5; color: black; }
         .no-print { max-width: 1100px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; border-top: 5px solid #da251d; }
@@ -10,6 +10,7 @@
         .tab-item { flex: 1; padding: 10px; text-align: center; background: #e0e0e0; cursor: pointer; font-weight: bold; border-radius: 5px; border: 1px solid #ccc; font-size: 10pt; }
         .tab-item.active { background: #0056b3; color: white; border-color: #0056b3; }
         
+        /* CẤU HÌNH LỀ A4 CHUẨN: Trên 2, Dưới 2, Trái 3, Phải 1.5 */
         .print-page { 
             width: 210mm; min-height: 297mm; 
             padding-top: 20mm; padding-bottom: 20mm; 
@@ -18,18 +19,22 @@
             font-size: 13pt; border: 1px solid #eee; position: relative; 
         }
         
-        .flex-header { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
-        .header-left { width: 45%; text-align: center; white-space: nowrap; }
-        .header-right { width: 55%; text-align: center; white-space: nowrap; }
+        .flex-header { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 10px; }
+        .header-left { width: 45%; text-align: center; white-space: nowrap; line-height: 1.3; }
+        .header-right { width: 55%; text-align: center; white-space: nowrap; line-height: 1.3; }
         .title-bold { font-weight: bold; text-transform: uppercase; }
         
-        .main-title { text-align: center; font-weight: bold; font-size: 15pt; margin: 20px 0 5px 0; text-transform: uppercase; }
+        .main-title { text-align: center; font-weight: bold; font-size: 15pt; margin: 25px 0 5px 0; text-transform: uppercase; }
         .sub-title { text-align: center; font-weight: bold; margin-bottom: 15px; }
         
         .day-block { margin-top: 15px; }
         .day-head { font-weight: bold; text-transform: uppercase; text-decoration: underline; margin-bottom: 5px; }
+        
+        /* CĂN LỀ ĐỀU (CTRL+J) VÀ THỤT ĐẦU DÒNG 1.1CM */
         .day-content { text-align: justify; margin-bottom: 10px; }
-        .direct-item { margin-bottom: 3px; }
+        .text-line { text-indent: 1.1cm; margin: 0; }
+        
+        .direct-item { margin-bottom: 3px; text-indent: 1.1cm; }
 
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f9f9f9; padding: 15px; border-radius: 5px; border: 1px solid #ddd; }
         input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; font-family: "Times New Roman"; font-size: 11pt; box-sizing: border-box; }
@@ -76,26 +81,22 @@
         <div id="t-tuan" class="tab-item active" onclick="setTab('tuan')">LỊCH CÔNG TÁC</div>
         <div id="t-dem" class="tab-item" onclick="setTab('dem')">LỊCH TRỰC ĐÊM</div>
         <div id="t-cuoituan" class="tab-item" onclick="setTab('cuoituan')">LỊCH TRỰC T7-CN</div>
-        <div id="t-le" class="tab-item" onclick="setTab('le')">LỊCH TRỰC CÁC NGÀY LỄ, TẾT</div>
+        <div id="t-le" class="tab-item" onclick="setTab('le')">LỊCH TRỰC LỄ</div>
         <div id="t-staff" class="tab-item" onclick="setTab('staff')" style="background: #333; color: white; display: none;">QUẢN LÝ HỆ THỐNG</div>
     </div>
 
-    <div id="permissionNotice" class="warning-box" style="display:none; margin-bottom: 10px;">
-        ⚠ Tài khoản của bạn không có quyền chỉnh sửa lịch này.
-    </div>
+    <div id="permissionNotice" class="warning-box" style="display:none; margin-bottom: 10px;">⚠ Không có quyền chỉnh sửa loại lịch này.</div>
 
     <div id="inputArea" style="display:none;">
         <div id="inputForm" class="form-grid">
             <div id="box-holiday-name" style="display:none;" class="full-width">
-                <label>Tên dịp Lễ/Tết (VD: LỊCH TRỰC TẾT NGUYÊN ĐÁN):</label>
+                <label>Tên dịp Lễ/Tết:</label>
                 <input type="text" id="holidayName">
             </div>
-            
             <div id="box-normal-date" class="full-width">
-                <label id="dateLabel">Số ngày trực:</label>
+                <label id="dateLabel">Ngày thực hiện:</label>
                 <select id="dateSelect"></select>
             </div>
-
             <div id="box-holiday-range" style="display:none;" class="full-width">
                 <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; align-items:end">
                     <div><label>Số ngày nghỉ:</label><input type="number" id="numDays" value="1"></div>
@@ -103,12 +104,10 @@
                     <div><button class="btn btn-gray" onclick="generateHolidayDates()">Tạo danh sách ngày</button></div>
                 </div>
             </div>
-
             <div id="box-time">
                 <label>Thời gian:</label>
                 <input type="text" id="timeInput" placeholder="Sáng 7h30...">
             </div>
-
             <div class="full-width" id="directFields" style="display:none; border-top: 1px dashed #ccc; padding-top: 10px;">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div><label>Trực Lãnh đạo:</label><select id="sel-ld"></select></div>
@@ -119,42 +118,33 @@
                     <div class="full-width"><label>Trực Bảo vệ:</label><input type="text" id="inp-bv"></div>
                 </div>
             </div>
-
             <div class="full-width" id="box-content">
                 <label>Nội dung công tác:</label>
                 <textarea id="contentInput" rows="3"></textarea>
             </div>
-
             <div class="full-width" id="formActions">
                 <button class="btn" id="btnSave">Lưu cập nhật</button>
                 <button class="btn" style="float:right; background:#d9534f" id="btnDelete">Xóa dữ liệu ngày này</button>
             </div>
         </div>
-
         <div id="staffForm" class="staff-manager" style="display:none;">
-            <h3>Quản lý cán bộ & Mật khẩu</h3>
+            <h3>Quản lý hệ thống</h3>
             <div class="form-grid">
                 <div><label>Nhóm:</label><select id="staffGroup"><option value="ld">Lãnh đạo</option><option value="tc">Trưởng ca</option><option value="nv">Nghiệp vụ</option><option value="vp">Văn phòng</option><option value="lx">Lái xe</option></select></div>
                 <div><label>Họ tên:</label><input type="text" id="staffName"></div>
                 <div class="full-width"><label>Số điện thoại:</label><input type="text" id="staffPhone"></div>
                 <div class="full-width"><button class="btn btn-green" id="btnAddStaff">Thêm cán bộ</button></div>
-                
                 <hr class="full-width">
                 <div class="full-width">
-                    <label><b>Reset mật khẩu đơn vị (về mặc định: vks123):</b></label>
-                    <div style="display:flex; gap:10px; margin-top:5px;">
-                        <select id="resetUserSelect"></select>
-                        <button class="btn btn-orange" onclick="resetPassword()">Reset Mật Khẩu</button>
-                    </div>
+                    <label><b>Reset mật khẩu đơn vị (mặc định: vks123):</b></label>
+                    <div style="display:flex; gap:10px; margin-top:5px;"><select id="resetUserSelect"></select><button class="btn btn-orange" onclick="resetPassword()">Reset</button></div>
                 </div>
             </div>
             <div id="staffListDisplay" style="margin-top:15px; background: white; padding: 10px; border: 1px solid #ccc;"></div>
         </div>
     </div>
     
-    <div style="margin-top: 15px; text-align: center;">
-        <button class="btn btn-green" onclick="window.print()">Xuất bản in (PDF)</button>
-    </div>
+    <div style="margin-top: 15px; text-align: center;"><button class="btn btn-green" onclick="window.print()">Xuất bản in (PDF)</button></div>
 </div>
 
 <div class="print-page">
@@ -208,11 +198,6 @@
     let db = { passwords: {}, staff: { ld: [], tc: [], nv: [], vp: [], lx: [] } };
     let weekData = {};
 
-    // Khởi tạo phím Enter cho đăng nhập
-    document.getElementById('passInput').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') loginFn();
-    });
-
     function getWeekNumber(d) {
         d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
         d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
@@ -228,6 +213,8 @@
         const val = weekPicker.value;
         currentWeekKey = val.replace("-W", "_");
         const [year, week] = val.split("-W");
+        
+        // Tìm ngày Thứ Hai của tuần đó
         const firstDayOfYear = new Date(year, 0, 1);
         const days = (week - 1) * 7;
         const startDay = new Date(year, 0, firstDayOfYear.getDay() <= 4 ? 1 - firstDayOfYear.getDay() + 1 : 1 - firstDayOfYear.getDay() + 8);
@@ -239,7 +226,19 @@
             let name = (i==5?"Thứ Bảy":i==6?"Chủ Nhật":"Thứ " + ["Hai","Ba","Tư","Năm","Sáu"][i]);
             window.currentWeekDays.push({ label: name, date: d.toLocaleDateString('vi-VN') });
         }
-        document.getElementById('docNum').innerText = `Số: ${parseInt(week)}/LCT`;
+
+        // Cập nhật Số văn bản
+        const numText = parseInt(week);
+        if(currentTab === 'tuan') {
+            document.getElementById('docNum').innerText = `Số: ${numText}/LCT`;
+        } else {
+            document.getElementById('docNum').innerText = `Số: ${numText}/TB-VKS-LT`;
+        }
+
+        // Cập nhật ngày địa danh (Thứ hai mỗi tuần)
+        const mon = window.currentWeekDays[0].date.split('/');
+        document.getElementById('topDate').innerText = `Cần Thơ, ngày ${mon[0]} tháng ${mon[1]} năm ${mon[2]}`;
+
         onValue(ref(database, 'data_weeks/' + currentWeekKey), (snapshot) => {
             weekData = snapshot.val() || { tuan: {}, dem: {}, cuoituan: {}, le: { data: {}, name: "" } };
             render();
@@ -257,10 +256,9 @@
         }
     });
 
-    window.showLogin = () => { document.getElementById('loginBox').style.display = 'block'; document.getElementById('passInput').focus(); };
-
     window.setTab = function(t) {
         currentTab = t;
+        updateWeekDisplay(); // Để đổi Số văn bản ngay khi chuyển tab
         const isVP = (currentUser === "Văn phòng");
         const isLoggedIn = (currentUser !== "");
 
@@ -281,7 +279,6 @@
         document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
         document.getElementById('t-' + t).classList.add('active');
 
-        // Logic ẩn hiện các trường theo Tab
         const isDirectTab = (t !== 'tuan');
         document.getElementById('directFields').style.display = isDirectTab ? 'block' : 'none';
         document.getElementById('box-time').style.display = isDirectTab ? 'none' : 'block';
@@ -292,12 +289,10 @@
             document.getElementById('box-holiday-name').style.display = 'block';
             document.getElementById('box-holiday-range').style.display = 'block';
             document.getElementById('box-normal-date').style.display = 'block';
-            document.getElementById('dateLabel').innerText = "Chọn ngày từ danh sách vừa tạo:";
         } else {
             document.getElementById('box-holiday-name').style.display = 'none';
             document.getElementById('box-holiday-range').style.display = 'none';
             document.getElementById('box-normal-date').style.display = 'block';
-            document.getElementById('dateLabel').innerText = "Ngày thực hiện:";
             const dSel = document.getElementById('dateSelect');
             dSel.innerHTML = "";
             const list = (t === 'cuoituan' ? [5,6] : t === 'dem' ? [0,1,2,3,4] : [0,1,2,3,4,5,6]);
@@ -309,18 +304,15 @@
     window.generateHolidayDates = function() {
         const start = new Date(document.getElementById('startDate').value);
         const num = parseInt(document.getElementById('numDays').value);
-        if (!start || isNaN(num)) return alert("Hãy nhập ngày bắt đầu và số ngày!");
-        
+        if (!start || isNaN(num)) return alert("Nhập ngày!");
         const dSel = document.getElementById('dateSelect');
         dSel.innerHTML = "";
         for(let i=0; i<num; i++) {
-            let d = new Date(start);
-            d.setDate(start.getDate() + i);
+            let d = new Date(start); d.setDate(start.getDate() + i);
             let dateStr = d.toLocaleDateString('vi-VN');
             let dayName = ["Chủ Nhật","Thứ Hai","Thứ Ba","Thứ Tư","Thứ Năm","Thứ Sáu","Thứ Bảy"][d.getDay()];
             dSel.add(new Option(`${dayName} (${dateStr})`, `${dayName} (${dateStr})`));
         }
-        alert("Đã tạo danh sách ngày nghỉ lễ. Hãy chọn từng ngày ở ô bên dưới để nhập cán bộ trực.");
     };
 
     function render() {
@@ -328,10 +320,7 @@
         const defaultText = "- Lãnh đạo Viện và các phòng nghiệp vụ làm việc bình thường.";
         if(currentTab === 'le') {
             document.getElementById('pTitle').innerText = weekData.le.name || "THÔNG BÁO LỊCH TRỰC LỄ";
-            if(weekData.le.data) {
-                // Sắp xếp ngày lễ theo trình tự thời gian
-                Object.keys(weekData.le.data).sort().forEach(day => h += renderDirectBlock(day.toUpperCase(), weekData.le.data[day]));
-            }
+            if(weekData.le.data) Object.keys(weekData.le.data).sort().forEach(day => h += renderDirectBlock(day.toUpperCase(), weekData.le.data[day]));
         } else {
             const titles = { tuan: "LỊCH CÔNG TÁC TUẦN", dem: "LỊCH TRỰC ĐÊM", cuoituan: "LỊCH TRỰC THỨ BẢY - CHỦ NHẬT" };
             document.getElementById('pTitle').innerText = titles[currentTab] || "";
@@ -342,8 +331,9 @@
                 const data = weekData[currentTab] ? weekData[currentTab][i] : null;
                 if(currentTab === 'tuan') {
                     let items = data || [];
-                    let txt = items.length ? items.map(it => `${it.t ? it.t + ": " : ""}${it.c} (${it.u})`).join("\n") + "\n" + defaultText : defaultText;
-                    h += `<div class="day-block"><div class="day-head">${dayHeader}</div><div class="day-content" style="white-space:pre-line;">${txt}</div></div>`;
+                    let txtStr = items.map(it => `<p class="text-line">${it.t ? it.t + ": " : ""}${it.c} (${it.u})</p>`).join("");
+                    txtStr += `<p class="text-line">${defaultText}</p>`;
+                    h += `<div class="day-block"><div class="day-head">${dayHeader}</div><div class="day-content">${txtStr}</div></div>`;
                 } else h += renderDirectBlock(dayHeader, data);
             });
         }
@@ -352,7 +342,7 @@
 
     function renderDirectBlock(title, data) {
         let html = `<div class="day-block"><div class="day-head">${title}</div>`;
-        if(!data) html += `<div class="day-content">- Chưa có dữ liệu trực.</div></div>`;
+        if(!data) html += `<div class="day-content"><p class="text-line">- Chưa có dữ liệu trực.</p></div></div>`;
         else {
             html += `<div class="day-content">
                 <div class="direct-item"><b>Trực Lãnh đạo:</b> ${data.ld || ""}</div>
@@ -369,8 +359,6 @@
     document.getElementById('btnSave').onclick = () => {
         if(currentUser === "") return alert("Hãy đăng nhập!");
         let d = document.getElementById('dateSelect').value;
-        if(!d) return alert("Chưa chọn ngày!");
-
         if(currentTab === 'tuan') {
             if(!weekData.tuan) weekData.tuan = {};
             if(!weekData.tuan[d]) weekData.tuan[d] = [];
@@ -396,28 +384,21 @@
             document.getElementById('loginBox').style.display='none';
             document.getElementById('logoutGroup').style.display='block';
             document.getElementById('userLabel').innerText = currentUser;
-            document.getElementById('statusLabel').innerText = "Chế độ: ĐANG CẬP NHẬT";
             if(currentUser === "Văn phòng") document.getElementById('t-staff').style.display = 'block';
             setTab(currentTab);
         } else alert("Sai mật khẩu!");
     };
     document.getElementById('btnLogin').onclick = loginFn;
+    document.getElementById('passInput').onkeyup = (e) => { if(e.key === "Enter") loginFn(); };
 
     window.changeMyPass = () => {
-        let p1 = prompt("Nhập mật khẩu mới:");
-        if(p1) {
-            let p2 = prompt("Nhập lại mật khẩu mới để xác nhận:");
-            if(p1 === p2) {
-                update(ref(database, 'vks_settings/passwords'), { [currentUser]: p1 }).then(() => alert("Đã đổi mật khẩu thành công!"));
-            } else alert("Mật khẩu xác nhận không khớp!");
-        }
+        let p1 = prompt("Mật khẩu mới:");
+        if(p1 && p1 === prompt("Nhập lại:")) update(ref(database, 'vks_settings/passwords'), { [currentUser]: p1 }).then(() => alert("Đã đổi!"));
     };
 
     window.resetPassword = () => {
         let target = document.getElementById('resetUserSelect').value;
-        if(confirm(`Reset mật khẩu của ${target} về 'vks123'?`)) {
-            update(ref(database, 'vks_settings/passwords'), { [target]: "vks123" }).then(() => alert("Đã reset thành công!"));
-        }
+        if(confirm(`Reset ${target}?`)) update(ref(database, 'vks_settings/passwords'), { [target]: "vks123" }).then(() => alert("Đã reset!"));
     };
 
     function updateStaffSelectors() {
@@ -442,11 +423,9 @@
 
     const uSel = document.getElementById('userSelect');
     const rSel = document.getElementById('resetUserSelect');
-    users.forEach(u => {
-        uSel.add(new Option(u, u));
-        rSel.add(new Option(u, u));
-    });
-    document.getElementById('topDate').innerText = `Cần Thơ, ngày ${now.getDate()} tháng ${now.getMonth()+1} năm ${now.getFullYear()}`;
+    users.forEach(u => { uSel.add(new Option(u, u)); rSel.add(new Option(u, u)); });
+    
+    window.showLogin = () => { document.getElementById('loginBox').style.display = 'block'; document.getElementById('passInput').focus(); };
     updateWeekDisplay();
 </script>
 </body>
