@@ -161,18 +161,20 @@
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     // --- CẤU HÌNH FIREBASE ---
-    const firebaseConfig = {
-        apiKey: "AIzaSy...",
-        authDomain: "du-an-cua-ban.firebaseapp.com",
-        databaseURL: "https://du-an-cua-ban-default-rtdb.firebaseio.com",
-        projectId: "du-an-cua-ban",
-        storageBucket: "du-an-cua-ban.appspot.com",
-        messagingSenderId: "123456789",
-        appId: "1:123456789:web:abcdef"
-    };
+   const firebaseConfig = {
+  apiKey: "AIzaSyDMCK_fMLGgcL7pMo3iQZUf3rdjmwF9E_8",
+  authDomain: "lichcongtac-348b6.firebaseapp.com",
+  databaseURL: "https://lichcongtac-348b6-default-rtdb.firebaseio.com",
+  projectId: "lichcongtac-348b6",
+  storageBucket: "lichcongtac-348b6.firebasestorage.app",
+  messagingSenderId: "648001782022",
+  appId: "1:648001782022:web:f8bb081efa5b606c31de87",
+  measurementId: "G-LNG24HCDF8"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
     const users = ["Văn phòng", "Viện trưởng", "Phó viện trưởng Lê Nguyễn Trường Sơn", "Phó viện trưởng Phạm Chi Lăng", "Phó viện trưởng Nguyễn Thanh Sang", "Phòng 1", "Phòng 2", "Phòng 7", "Phòng 8", "Phòng 9", "Phòng 10", "Phòng 11", "Phòng 15", "Thanh tra - Khiếu tố", "VKSND KV1", "VKSND KV2", "VKSND KV3", "VKSND KV4", "VKSND KV5", "VKSND KV6", "VKSND KV7", "VKSND KV8", "VKSND KV9", "VKSND KV10", "VKSND KV11", "VKSND KV12", "VKSND KV13", "VKSND KV14"];
     
