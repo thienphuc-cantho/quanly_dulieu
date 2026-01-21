@@ -80,8 +80,8 @@
     <div class="tab-box">
         <div id="t-tuan" class="tab-item active" onclick="setTab('tuan')">LỊCH CÔNG TÁC</div>
         <div id="t-dem" class="tab-item" onclick="setTab('dem')">LỊCH TRỰC ĐÊM</div>
-        <div id="t-cuoituan" class="tab-item" onclick="setTab('cuoituan')">LỊCH TRỰC T7-CN</div>
-        <div id="t-le" class="tab-item" onclick="setTab('le')">LỊCH TRỰC LỄ</div>
+        <div id="t-cuoituan" class="tab-item" onclick="setTab('cuoituan')">LỊCH TRỰC T7, CHỦ NHẬT</div>
+        <div id="t-le" class="tab-item" onclick="setTab('le')">LỊCH TRỰC CÁC NGÀY LỄ, TẾT</div>
         <div id="t-staff" class="tab-item" onclick="setTab('staff')" style="background: #333; color: white; display: none;">QUẢN LÝ HỆ THỐNG</div>
     </div>
 
@@ -94,7 +94,7 @@
                 <input type="text" id="holidayName">
             </div>
             <div id="box-normal-date" class="full-width">
-                <label id="dateLabel">Ngày thực hiện:</label>
+                <label id="dateLabel">Chọn Thứ trong tuần:</label>
                 <select id="dateSelect"></select>
             </div>
             <div id="box-holiday-range" style="display:none;" class="full-width">
@@ -106,7 +106,7 @@
             </div>
             <div id="box-time">
                 <label>Thời gian:</label>
-                <input type="text" id="timeInput" placeholder="Sáng 7h30...">
+                <input type="text" id="timeInput" placeholder="Nhập giờ công tác">
             </div>
             <div class="full-width" id="directFields" style="display:none; border-top: 1px dashed #ccc; padding-top: 10px;">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
